@@ -11,5 +11,7 @@ namespace GerenciaAluno.Domain.Interfaces.Repository
     public interface IAlunoRepository : IBaseRepository<Aluno>
     {
         Task<Aluno> ObterPorCpfAsync(string cpf);
+        Task<bool> ExisteCpfAsync(string cpf);
+
     }
 }

@@ -11,5 +11,7 @@ namespace GerenciaAluno.Domain.Interfaces.Repository
     public interface IProfessorRepository : IBaseRepository<Professor>
     {
         Task<Professor> ObterPorCpfAsync(string cpf);
+        Task<bool> ExisteCpfAsync(string cpf);
+
     }
 }
