@@ -24,7 +24,7 @@ namespace GerenciaAluno.Domain.Validations
                 .LessThan(DateTime.Today).WithMessage("Data de nascimento deve ser no passado.");
 
             RuleFor(p => p.Cpf)
-                .NotNull().WithMessage("CPF é obrigatório.")
+                .NotNull().WithMessage("CPF é obrigatório.");
         }
     }
 }

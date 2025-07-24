@@ -1,10 +1,14 @@
 using GerenciaAluno.Api.Extensions;
+using GerenciaAluno.Infra.Data.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// Infra Services
+builder.Services.AddEntityFramework(builder.Configuration);
 
 // Swagger (centralizado na extensão)
 builder.Services.AddSwaggerDocumentation();
