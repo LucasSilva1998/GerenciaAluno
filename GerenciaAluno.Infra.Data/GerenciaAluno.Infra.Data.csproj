@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GerenciaAluno.Domain\GerenciaAluno.Domain.csproj" />
   </ItemGroup>
 

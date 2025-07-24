@@ -20,5 +20,17 @@ namespace GerenciaAluno.Domain.Entities
 
         public Aluno Aluno { get; private set; }
         public Professor Professor { get; private set; }
+
+        // Construtor para reconstrução
+        public Nota(int id, int alunoId, int professorId, Disciplina disciplina, decimal valor, StatusNota status, DateTime dataLancamento)
+        {
+            Id = id;
+            AlunoId = alunoId;
+            ProfessorId = professorId;
+            Disciplina = disciplina;
+            Valor = valor;
+            Status = status;
+            DataLancamento = dataLancamento;
+        }
     }
 }

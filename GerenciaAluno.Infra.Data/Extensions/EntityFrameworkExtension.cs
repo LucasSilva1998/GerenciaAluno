@@ -1,5 +1,6 @@
 ﻿using GerenciaAluno.Domain.Interfaces.Core;
 using GerenciaAluno.Infra.Data.Context;
+using GerenciaAluno.Infra.Data.Repositories.UoW;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,7 @@ namespace GerenciaAluno.Infra.Data.Extensions
                 options.UseSqlServer(configuration.GetConnectionString("GerenciaAlunoBD")));
 
             // Injeção de dependência do UnitOfWork
-            //services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;
         }

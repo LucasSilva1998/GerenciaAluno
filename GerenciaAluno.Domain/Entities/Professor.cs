@@ -16,5 +16,17 @@ namespace GerenciaAluno.Domain.Entities
         public string Email { get; private set; }
 
         public ICollection<Nota> NotasLançadas { get; private set; }
+
+
+        // Construtor para reconstrução
+        public Professor(int id, string nome, Cpf cpf, DateTime dataNascimento, string email)
+        {
+            Id = id;
+            Nome = nome;
+            Cpf = cpf;
+            DataNascimento = dataNascimento;
+            Email = email;
+            NotasLançadas = new List<Nota>();
+        }
     }
 }

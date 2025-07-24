@@ -22,7 +22,7 @@ namespace GerenciaAluno.Infra.Data.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.ApplyConfiguration(new AlunoMap);
+            modelBuilder.ApplyConfiguration(new AlunoMap());
             modelBuilder.ApplyConfiguration(new ProfessorMap());
             modelBuilder.ApplyConfiguration(new NotaMap());
 
