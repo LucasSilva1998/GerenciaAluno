@@ -9,19 +9,41 @@ namespace GerenciaAluno.Domain.Entities
 {
     public class Nota
     {
-        public int Id { get; private set; }
-        public int AlunoId { get; private set; }
-        public int ProfessorId { get; private set; }
+        public int Id { get; set; }
 
-        public Disciplina Disciplina { get; private set; }
-        public decimal Valor { get; private set; }
-        public StatusNota Status { get; private set; }
-        public DateTime DataLancamento { get; private set; }
+        public int AlunoId { get; set; }
+        public int ProfessorId { get; set; }
 
-        public Aluno Aluno { get; private set; }
-        public Professor Professor { get; private set; }
+        public Disciplina Disciplina { get; set; }
+        public decimal Valor { get; set; }
+        public StatusNota Status { get; set; }
+        public DateTime DataLancamento { get; set; }
 
-        // Construtor para reconstrução
+        public Aluno Aluno { get; set; }
+        public Professor Professor { get; set; }
+
+
+        // Construtor para criação com objetos (Application ou EF)
+        public Nota(Aluno aluno, Professor professor, Disciplina disciplina, decimal valor, StatusNota status, DateTime dataLancamento)
+        {
+            Aluno = aluno;
+            Professor = professor;
+            AlunoId = aluno.Id;
+            ProfessorId = professor.Id;
+            Disciplina = disciplina;
+            Valor = valor;
+            Status = status;
+            DataLancamento = dataLancamento;
+        }
+
+        // Construtor para reconstrução com objetos (Entity completa)
+        public Nota(int id, Aluno aluno, Professor professor, Disciplina disciplina, decimal valor, StatusNota status, DateTime dataLancamento)
+            : this(aluno, professor, disciplina, valor, status, dataLancamento)
+        {
+            Id = id;
+        }
+
+        // Construtor para Dapper ou uso com apenas IDs (Infra)
         public Nota(int id, int alunoId, int professorId, Disciplina disciplina, decimal valor, StatusNota status, DateTime dataLancamento)
         {
             Id = id;
