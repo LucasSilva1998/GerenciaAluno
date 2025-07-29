@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GerenciaAluno.Application\GerenciaAluno.Application.csproj" />
     <ProjectReference Include="..\GerenciaAluno.Domain\GerenciaAluno.Domain.csproj" />
     <ProjectReference Include="..\GerenciaAluno.Infra.Data\GerenciaAluno.Infra.Data.csproj" />

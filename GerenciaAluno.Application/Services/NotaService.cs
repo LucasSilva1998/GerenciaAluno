@@ -44,6 +44,32 @@ namespace GerenciaAluno.Application.Services
             await _unitOfWork.CommitAsync();
         }
 
+        public async Task AtualizarNotaAsync(int id, NotaRequest request)
+        {
+            var notaExistente = await _notaRepository.ObterPorIdAsync(id);
+            if (notaExistente == null)
+                throw new Exception("Nota não encontrada.");
+
+            var aluno = await _alunoRepository.ObterPorIdAsync(request.AlunoId);
+            if (aluno == null)
+                throw new Exception("Aluno não encontrado.");
+
+            var professor = await _professorRepository.ObterPorIdAsync(request.ProfessorId);
+            if (professor == null)
+                throw new Exception("Professor não encontrado.");
+
+            notaExistente.Aluno = aluno;
+            notaExistente.Professor = professor;
+            notaExistente.Disciplina = (Disciplina)request.Disciplina;
+            notaExistente.Valor = request.Valor;
+            notaExistente.DataLancamento = DateTime.Now; 
+            notaExistente.Status = StatusNota.Lançada; 
+
+            _notaRepository.Atualizar(notaExistente);
+            await _unitOfWork.CommitAsync();
+        }
+
+
         public async Task<NotaResponse> ObterPorIdAsync(int id)
         {
             var nota = await _notaRepository.ObterPorIdAsync(id);
