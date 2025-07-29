@@ -14,14 +14,12 @@ namespace GerenciaAluno.Domain.Services
     {
         private readonly IAlunoRepository _alunoRepository;
         private readonly IProfessorRepository _professorRepository;
-        private readonly ICadastroDomainService _cadastroDomainService;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CadastroDomainService(IAlunoRepository alunoRepository, IProfessorRepository professorRepository, ICadastroDomainService cadastroDomainService, IUnitOfWork unitOfWork)
+        public CadastroDomainService(IAlunoRepository alunoRepository, IProfessorRepository professorRepository, IUnitOfWork unitOfWork)
         {
             _alunoRepository = alunoRepository;
             _professorRepository = professorRepository;
-            _cadastroDomainService = cadastroDomainService;
             _unitOfWork = unitOfWork;
         }
 

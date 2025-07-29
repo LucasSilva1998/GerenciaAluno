@@ -1,5 +1,13 @@
+using FluentValidation.Validators;
 using GerenciaAluno.Api.Extensions;
+using GerenciaAluno.Application.Extensions;
+using GerenciaAluno.Application.Interfaces;
+using GerenciaAluno.Application.Services;
+using GerenciaAluno.Domain.Interfaces.Repository;
+using GerenciaAluno.Domain.Interfaces.Services;
+using GerenciaAluno.Domain.Services;
 using GerenciaAluno.Infra.Data.Extensions;
+using GerenciaAluno.Infra.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,8 +15,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+// Application Services
+builder.Services.AddApplicationServices();
+
+// Domain Services
+builder.Services.AddScoped<ICadastroDomainService, CadastroDomainService>();
+
 // Infra Services
 builder.Services.AddEntityFramework(builder.Configuration);
+builder.Services.AddInfrastructureServices();
 
 // Swagger (centralizado na extensão)
 builder.Services.AddSwaggerDocumentation();
