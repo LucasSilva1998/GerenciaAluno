@@ -2,43 +2,44 @@
 using GerenciaAluno.Application.Dtos.Response;
 using GerenciaAluno.Application.Interfaces;
 using GerenciaAluno.Application.Mappers;
+using GerenciaAluno.Domain.Entities;
+using GerenciaAluno.Domain.Exceptions;
+using GerenciaAluno.Domain.Exceptions.Aluno;
 using GerenciaAluno.Domain.Interfaces.Core;
 using GerenciaAluno.Domain.Interfaces.Repository;
 using GerenciaAluno.Domain.Interfaces.Services;
 using GerenciaAluno.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GerenciaAluno.Application.Services
 {
     public class AlunoService : IAlunoService
     {
         private readonly IAlunoRepository _alunoRepository;
+        private readonly IAlunoDomainService _alunoDomainService;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICadastroDomainService _cadastroDomainService;
 
-        public AlunoService(IAlunoRepository alunoRepository, IUnitOfWork unitOfWork, ICadastroDomainService cadastroDomainService)
+        public AlunoService(IAlunoRepository alunoRepository, IAlunoDomainService alunoDomainService, IUnitOfWork unitOfWork)
         {
             _alunoRepository = alunoRepository;
+            _alunoDomainService = alunoDomainService;
             _unitOfWork = unitOfWork;
-            _cadastroDomainService = cadastroDomainService;
         }
 
         public async Task CadastrarAsync(AlunoRequest request)
         {
             var aluno = AlunoMapper.ToEntity(request);
 
-            await _cadastroDomainService.CadastrarAlunoAsync(aluno);
+            await _alunoDomainService.ValidarCadastroAsync(aluno);
+
+            await _alunoRepository.AdicionarAsync(aluno);
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task AtualizarAsync(int id, AlunoRequest request)
         {
             var alunoExistente = await _alunoRepository.ObterPorIdAsync(id);
             if (alunoExistente == null)
-                throw new Exception("Aluno não encontrado.");
+                throw new AlunoNaoEncontradoException("Aluno não encontrado.");
 
             AlunoMapper.AtualizarEntidade(alunoExistente, request);
 
@@ -46,12 +47,11 @@ namespace GerenciaAluno.Application.Services
             await _unitOfWork.CommitAsync();
         }
 
-
         public async Task RemoverAsync(int id)
         {
             var alunoExistente = await _alunoRepository.ObterPorIdAsync(id);
             if (alunoExistente == null)
-                throw new Exception("Aluno não encontrado.");
+                throw new AlunoNaoEncontradoException("Aluno não encontrado.");
 
             _alunoRepository.Remover(alunoExistente);
             await _unitOfWork.CommitAsync();
@@ -61,7 +61,7 @@ namespace GerenciaAluno.Application.Services
         {
             var aluno = await _alunoRepository.ObterPorIdAsync(id);
             if (aluno == null)
-                throw new Exception("Aluno não encontrado.");
+                throw new AlunoNaoEncontradoException("Aluno não encontrado.");
 
             return AlunoMapper.ToResponse(aluno);
         }

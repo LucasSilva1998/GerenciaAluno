@@ -18,10 +18,7 @@ builder.Services.AddControllers();
 // Application Services
 builder.Services.AddApplicationServices();
 
-// Domain Services
-builder.Services.AddScoped<ICadastroDomainService, CadastroDomainService>();
-
-// Infra Services
+// Infra Services + Domain Services
 builder.Services.AddEntityFramework(builder.Configuration);
 builder.Services.AddInfrastructureServices();
 

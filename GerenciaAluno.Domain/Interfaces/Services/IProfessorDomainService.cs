@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GerenciaAluno.Domain.Interfaces.Services
 {
-    public interface ICadastroDomainService
+    public interface IProfessorDomainService
     {
-        Task CadastrarAlunoAsync(Aluno aluno);
-        Task CadastrarProfessorAsync(Professor professor);
+        Task ValidarCadastroAsync(Professor professor);
     }
 }
+

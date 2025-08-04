@@ -38,5 +38,15 @@ namespace GerenciaAluno.Application.Mappers
                 DateTime.Now                    
             );
         }
+
+        public static void AtualizarEntidade(Nota nota, NotaRequest request, Aluno aluno, Professor professor)
+        {
+            nota.Aluno = aluno;
+            nota.Professor = professor;
+            nota.Disciplina = (Disciplina)request.Disciplina;
+            nota.Valor = request.Valor;
+            nota.DataLancamento = DateTime.Now;
+            nota.Status = StatusNota.Lançada;
+        }
     }
 }

@@ -2,13 +2,13 @@
 using GerenciaAluno.Application.Dtos.Response;
 using GerenciaAluno.Application.Interfaces;
 using GerenciaAluno.Application.Mappers;
+using GerenciaAluno.Domain.Entities;
+using GerenciaAluno.Domain.Exceptions;
 using GerenciaAluno.Domain.Interfaces.Core;
 using GerenciaAluno.Domain.Interfaces.Repository;
 using GerenciaAluno.Domain.Interfaces.Services;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GerenciaAluno.Application.Services
@@ -17,27 +17,28 @@ namespace GerenciaAluno.Application.Services
     {
         private readonly IProfessorRepository _professorRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ICadastroDomainService _cadastroDomainService;
+        private readonly IProfessorDomainService _professorDomainService;
 
-        public ProfessorService(IProfessorRepository professorRepository, IUnitOfWork unitOfWork, ICadastroDomainService cadastroDomainService)
+        public ProfessorService(IProfessorRepository professorRepository, IUnitOfWork unitOfWork, IProfessorDomainService professorDomainService)
         {
             _professorRepository = professorRepository;
             _unitOfWork = unitOfWork;
-            _cadastroDomainService = cadastroDomainService;
+            _professorDomainService = professorDomainService;
         }
 
         public async Task CadastrarAsync(ProfessorRequest request)
         {
             var professor = ProfessorMapper.ToEntity(request);
 
-            await _cadastroDomainService.CadastrarProfessorAsync(professor);
+            await _professorDomainService.ValidarCadastroAsync(professor);
+
+            await _professorRepository.AdicionarAsync(professor);
+            await _unitOfWork.CommitAsync();
         }
 
         public async Task AtualizarAsync(int id, ProfessorRequest request)
         {
-            var professorExistente = await _professorRepository.ObterPorIdAsync(id);
-            if (professorExistente == null)
-                throw new Exception("Professor não encontrado.");
+            var professorExistente = await ObterOuErroAsync(id);
 
             ProfessorMapper.AtualizarEntidade(professorExistente, request);
 
@@ -47,9 +48,7 @@ namespace GerenciaAluno.Application.Services
 
         public async Task RemoverAsync(int id)
         {
-            var professorExistente = await _professorRepository.ObterPorIdAsync(id);
-            if (professorExistente == null)
-                throw new Exception("Professor não encontrado.");
+            var professorExistente = await ObterOuErroAsync(id);
 
             _professorRepository.Remover(professorExistente);
             await _unitOfWork.CommitAsync();
@@ -57,9 +56,7 @@ namespace GerenciaAluno.Application.Services
 
         public async Task<ProfessorResponse> ObterPorIdAsync(int id)
         {
-            var professor = await _professorRepository.ObterPorIdAsync(id);
-            if (professor == null)
-                throw new Exception("Professor não encontrado.");
+            var professor = await ObterOuErroAsync(id);
 
             return ProfessorMapper.ToResponse(professor);
         }
@@ -68,6 +65,16 @@ namespace GerenciaAluno.Application.Services
         {
             var professores = await _professorRepository.ObterTodosAsync();
             return professores.Select(ProfessorMapper.ToResponse);
+        }
+
+        // 🔧 Método auxiliar centraliza a validação de existência
+        private async Task<Professor> ObterOuErroAsync(int id)
+        {
+            var professor = await _professorRepository.ObterPorIdAsync(id);
+            if (professor == null)
+                throw new ProfessorNaoEncontradoException($"Professor com Id {id} não encontrado.");
+
+            return professor;
         }
     }
 }
