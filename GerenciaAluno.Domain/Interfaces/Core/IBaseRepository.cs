@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace GerenciaAluno.Domain.Interfaces.Core
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<TEntity, TKey> where TEntity : class
     {
-        Task<T> ObterPorIdAsync(int id);
-        Task<IEnumerable<T>> ObterTodosAsync();
-        Task AdicionarAsync(T entity);
-        void Atualizar(T entity);
-        void Remover(T entity);
+        Task AdicionarAsync(TEntity entity);
+        Task Atualizar(TEntity entity);
+        Task Remover(TEntity entity);
+        Task<IEnumerable<TEntity>> ObterTodosAsync();
+        Task<TEntity?> ObterPorIdAsync(TKey id);
     }
 }

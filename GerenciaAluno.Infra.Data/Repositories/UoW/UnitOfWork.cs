@@ -2,6 +2,7 @@
 using GerenciaAluno.Domain.Interfaces.Repository;
 using GerenciaAluno.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,16 @@ namespace GerenciaAluno.Infra.Data.Repositories.UoW
     {
         private readonly DataContext _context;
         private IDbContextTransaction _transaction;
+        private readonly IConfiguration _configuration;
 
-
-        public UnitOfWork(DataContext context)
+        public UnitOfWork(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+        }
+        public async Task BeginTransactionAsync()
+        {
+            _transaction = await _context.Database.BeginTransactionAsync();
         }
 
         public async Task<bool> CommitAsync()
@@ -26,6 +32,14 @@ namespace GerenciaAluno.Infra.Data.Repositories.UoW
             try
             {
                 await _context.SaveChangesAsync();
+
+                if (_transaction != null)
+                {
+                    await _transaction.CommitAsync();
+                    await _transaction.DisposeAsync();
+                    _transaction = null;
+                }
+
                 return true;
             }
             catch
@@ -44,12 +58,9 @@ namespace GerenciaAluno.Infra.Data.Repositories.UoW
             }
         }
 
-        public IAlunoRepository AlunoRepository => throw new NotImplementedException();
-
-        public IProfessorRepository professorRepository => throw new NotImplementedException();
-
-        public INotaRepository NotaRepository => throw new NotImplementedException();
-
+        public IAlunoRepository AlunoRepository => new AlunoRepository(_context, _configuration);
+        public INotaRepository NotaRepository => new NotaRepository(_context, _configuration);
+        public IProfessorRepository ProfessorRepository =>  new ProfessorRepository(_context, _configuration);
 
         public void Dispose()
         {

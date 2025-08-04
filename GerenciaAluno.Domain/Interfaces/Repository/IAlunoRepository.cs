@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GerenciaAluno.Domain.Interfaces.Repository
 {
-    public interface IAlunoRepository : IBaseRepository<Aluno>
+    public interface IAlunoRepository : IBaseRepository<Aluno, int>
     {
         Task<Aluno> ObterPorCpfAsync(string cpf);
         Task<bool> ExisteCpfAsync(string cpf);

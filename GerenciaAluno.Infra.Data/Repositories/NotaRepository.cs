@@ -3,42 +3,20 @@ using GerenciaAluno.Domain.Entities;
 using GerenciaAluno.Domain.Enums;
 using GerenciaAluno.Domain.Interfaces.Repository;
 using GerenciaAluno.Infra.Data.Context;
-using GerenciaAluno.Infra.Data.Repositories.UoW;
+using GerenciaAluno.Infra.Data.Repositories.Base;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GerenciaAluno.Infra.Data.Repositories
 {
-    public class NotaRepository : INotaRepository
+    public class NotaRepository : BaseRepository<Nota, int>, INotaRepository
     {
-        private readonly DataContext _context;
         private readonly IConfiguration _configuration;
 
         public NotaRepository(DataContext context, IConfiguration configuration)
+            : base(context)
         {
-            _context = context;
             _configuration = configuration;
-        }
-
-        public async Task AdicionarAsync(Nota nota)
-        {
-            await _context.Notas.AddAsync(nota);
-        }
-
-        public void Atualizar(Nota nota)
-        {
-            _context.Notas.Update(nota);
-        }
-
-        public void Remover(Nota nota)
-        {
-            _context.Notas.Remove(nota);
         }
 
         public async Task<IEnumerable<Nota>> ObterPorAlunoIdAsync(int alunoId)
@@ -47,7 +25,6 @@ namespace GerenciaAluno.Infra.Data.Repositories
             using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             var notas = await connection.QueryAsync<NotaDto>(sql, new { AlunoId = alunoId });
-
             return notas.Select(MapearParaNota);
         }
 
@@ -57,7 +34,6 @@ namespace GerenciaAluno.Infra.Data.Repositories
             using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             var notas = await connection.QueryAsync<NotaDto>(sql, new { ProfessorId = professorId });
-
             return notas.Select(MapearParaNota);
         }
 
@@ -67,8 +43,25 @@ namespace GerenciaAluno.Infra.Data.Repositories
             using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
 
             var notas = await connection.QueryAsync<NotaDto>(sql, new { Disciplina = (int)disciplina });
-
             return notas.Select(MapearParaNota);
+        }
+
+        public override async Task<Nota?> ObterPorIdAsync(int id)
+        {
+            var sql = @"SELECT * FROM Notas WHERE Id = @Id";
+            using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            var dto = await connection.QueryFirstOrDefaultAsync<NotaDto>(sql, new { Id = id });
+            return dto == null ? null : MapearParaNota(dto);
+        }
+
+        public override async Task<IEnumerable<Nota>> ObterTodosAsync()
+        {
+            var sql = @"SELECT * FROM Notas";
+            using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+
+            var dtos = await connection.QueryAsync<NotaDto>(sql);
+            return dtos.Select(MapearParaNota).ToList();
         }
 
         private Nota MapearParaNota(NotaDto dto)
@@ -84,26 +77,8 @@ namespace GerenciaAluno.Infra.Data.Repositories
             );
         }
 
-        public async Task<Nota> ObterPorIdAsync(int id)
-        {
-            var sql = @"SELECT * FROM Notas WHERE Id = @Id";
-            using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-
-            var dto = await connection.QueryFirstOrDefaultAsync<NotaDto>(sql, new { Id = id });
-
-            return dto == null ? null : MapearParaNota(dto);
-        }
-
-        public async Task<IEnumerable<Nota>> ObterTodosAsync()
-        {
-            var sql = @"SELECT * FROM Notas";
-            using var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
-
-            var dtos = await connection.QueryAsync<NotaDto>(sql);
-            return dtos.Select(MapearParaNota).ToList();
-        }
-
-        internal class NotaDto
+        // DTO para uso com Dapper
+        private class NotaDto
         {
             public int Id { get; set; }
             public int AlunoId { get; set; }
@@ -115,4 +90,3 @@ namespace GerenciaAluno.Infra.Data.Repositories
         }
     }
 }
-

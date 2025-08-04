@@ -1,48 +1,45 @@
 ﻿using GerenciaAluno.Domain.Interfaces.Core;
 using GerenciaAluno.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GerenciaAluno.Infra.Data.Repositories.Base
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity, TKey>
+        where TEntity : class
     {
-        protected readonly DataContext _context;
-        protected readonly DbSet<T> _dbSet;
+        protected readonly DataContext _dataContext;
 
-        public BaseRepository(DataContext context)
+        protected BaseRepository(DataContext dataContext)
         {
-            _context = context;
-            _dbSet = context.Set<T>();
+            _dataContext = dataContext;
         }
 
-        public async Task AdicionarAsync(T entity)
+        public virtual async Task AdicionarAsync(TEntity entity)
         {
-            await _dbSet.AddAsync(entity);
+            await _dataContext.Set<TEntity>().AddAsync(entity);
         }
 
-        public void Atualizar(T entity)
+        public virtual async Task Atualizar(TEntity entity)
         {
-            _dbSet.Update(entity);
+            await Task.FromResult(_dataContext.Set<TEntity>().Update(entity));
         }
 
-        public async Task<T> ObterPorIdAsync(int id)
+        public virtual async Task<TEntity?> ObterPorIdAsync(TKey id)
         {
-            return await _dbSet.FindAsync(id);
+            return await _dataContext.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> ObterTodosAsync()
+        public virtual async Task<IEnumerable<TEntity>> ObterTodosAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await _dataContext.Set<TEntity>().ToListAsync();
         }
 
-        public void Remover(T entity)
+        public virtual async Task Remover(TEntity entity)
         {
-            _dbSet.Remove(entity);
+            await Task.FromResult(_dataContext.Set<TEntity>().Remove(entity));
+
         }
     }
 }

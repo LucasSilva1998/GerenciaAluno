@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GerenciaAluno.Domain.Interfaces.Repository
 {
-    public interface INotaRepository : IBaseRepository<Nota>
+    public interface INotaRepository : IBaseRepository<Nota, int>
     {
         Task<IEnumerable<Nota>> ObterPorAlunoIdAsync(int alunoId);
         Task<IEnumerable<Nota>> ObterPorProfessorIdAsync(int professorId);

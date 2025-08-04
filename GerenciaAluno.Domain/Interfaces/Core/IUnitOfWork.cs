@@ -9,14 +9,16 @@ namespace GerenciaAluno.Domain.Interfaces.Core
 {
     public interface IUnitOfWork : IDisposable
     {
+        Task BeginTransactionAsync();
+
         Task<bool> CommitAsync();
 
         Task RollbackAsync();
 
-        #region
+        #region Propriedades para acesso aos repositórios
 
         IAlunoRepository AlunoRepository { get; }
-        IProfessorRepository professorRepository { get; }
+        IProfessorRepository ProfessorRepository { get; }
         INotaRepository NotaRepository { get; }
 
         #endregion
