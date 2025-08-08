@@ -9,7 +9,15 @@ namespace GerenciaAluno.Domain.Interfaces.Services
 {
     public interface INotaDomainService
     {
-        Task ValidarCadastroAsync(Nota nota);
+        Task CadastarNota(Nota nota);
+        Task Atualizar(Nota nota);
+        Task Remover(Nota nota);
+        Task<List<Nota>> ObterTodos();
+        Task<Nota> ObterPorId(int id);
+        Task<IEnumerable<Nota>> ObterPorAlunoIdAsync(int alunoId);
+        Task<IEnumerable<Nota>> ObterPorProfessorIdAsync(int professorId);
+        Task<IEnumerable<Nota>> ObterPorDisciplinaAsync(Domain.Enums.Disciplina disciplina);
+
     }
 }
 

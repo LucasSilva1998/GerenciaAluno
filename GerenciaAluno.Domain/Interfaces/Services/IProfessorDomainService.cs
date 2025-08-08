@@ -9,7 +9,11 @@ namespace GerenciaAluno.Domain.Interfaces.Services
 {
     public interface IProfessorDomainService
     {
-        Task ValidarCadastroAsync(Professor professor);
+        Task CadastarProfessor(Professor professor);
+        Task Atualizar(Professor professor);
+        Task Remover(Professor professor);
+        Task<List<Professor>> ObterTodos();
+        Task<Professor?> ObterPorId(int id);
     }
 }
 

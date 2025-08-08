@@ -13,68 +13,42 @@ using System.Threading.Tasks;
 
 namespace GerenciaAluno.Application.Services
 {
-    public class ProfessorService : IProfessorService
-    {
-        private readonly IProfessorRepository _professorRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IProfessorDomainService _professorDomainService;
-
-        public ProfessorService(IProfessorRepository professorRepository, IUnitOfWork unitOfWork, IProfessorDomainService professorDomainService)
-        {
-            _professorRepository = professorRepository;
-            _unitOfWork = unitOfWork;
-            _professorDomainService = professorDomainService;
-        }
-
+    public class ProfessorService (IProfessorDomainService professorDomainService) : IProfessorService
+    {      
         public async Task CadastrarAsync(ProfessorRequest request)
         {
             var professor = ProfessorMapper.ToEntity(request);
 
-            await _professorDomainService.ValidarCadastroAsync(professor);
-
-            await _professorRepository.AdicionarAsync(professor);
-            await _unitOfWork.CommitAsync();
+            await professorDomainService.CadastarProfessor(professor);
         }
 
         public async Task AtualizarAsync(int id, ProfessorRequest request)
         {
-            var professorExistente = await ObterOuErroAsync(id);
+            var professorExistente = await professorDomainService.ObterPorId(id);
 
             ProfessorMapper.AtualizarEntidade(professorExistente, request);
 
-            _professorRepository.Atualizar(professorExistente);
-            await _unitOfWork.CommitAsync();
+            professorDomainService.Atualizar(professorExistente);
         }
 
         public async Task RemoverAsync(int id)
         {
-            var professorExistente = await ObterOuErroAsync(id);
+            var professorExistente = await professorDomainService.ObterPorId(id);
 
-            _professorRepository.Remover(professorExistente);
-            await _unitOfWork.CommitAsync();
+            professorDomainService.Remover(professorExistente);
         }
 
         public async Task<ProfessorResponse> ObterPorIdAsync(int id)
         {
-            var professor = await ObterOuErroAsync(id);
+            var professor = await professorDomainService.ObterPorId(id);
 
             return ProfessorMapper.ToResponse(professor);
         }
 
         public async Task<IEnumerable<ProfessorResponse>> ObterTodosAsync()
         {
-            var professores = await _professorRepository.ObterTodosAsync();
+            var professores = await professorDomainService.ObterTodos();
             return professores.Select(ProfessorMapper.ToResponse);
-        }
-
-        // 🔧 Método auxiliar centraliza a validação de existência
-        private async Task<Professor> ObterOuErroAsync(int id)
-        {
-            var professor = await _professorRepository.ObterPorIdAsync(id);
-            if (professor == null)
-                throw new ProfessorNaoEncontradoException($"Professor com Id {id} não encontrado.");
-
-            return professor;
-        }
+        }       
     }
 }

@@ -9,6 +9,10 @@ namespace GerenciaAluno.Domain.Interfaces.Services
 {
     public interface IAlunoDomainService
     {
-        Task ValidarCadastroAsync(Aluno aluno);
+        Task CadastarAluno(Aluno aluno);
+        Task Atualizar (Aluno aluno);
+        Task Remover(Aluno aluno);
+        Task<List<Aluno>> ObterTodos();
+        Task<Aluno?> ObterPorId(int id);
     }
 }
