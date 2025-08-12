@@ -12,7 +12,7 @@ using GerenciaAluno.Domain.Interfaces.Services;
 
 public class NotaService (INotaDomainService notaDomainService, IAlunoDomainService alunoDomainService, IProfessorDomainService professorDomainService) : INotaService
 {
-    public async Task LancarNotaAsync(NotaRequest request)
+    public async Task<NotaResponse> LancarNotaAsync(NotaRequest request)
     {
         var aluno = await alunoDomainService.ObterPorId(request.AlunoId);
         var professor = await professorDomainService.ObterPorId(request.ProfessorId);
@@ -20,9 +20,11 @@ public class NotaService (INotaDomainService notaDomainService, IAlunoDomainServ
         var nota = NotaMapper.ToEntity(request, aluno, professor);
 
         notaDomainService.CadastarNota(nota);
+
+        return NotaMapper.ToResponse(nota);
     }
 
-    public async Task AtualizarNotaAsync(int id, NotaRequest request)
+    public async Task<NotaResponse> AtualizarNotaAsync(int id, NotaRequest request)
     {
         var notaExistente = await notaDomainService.ObterPorId(id);
         var aluno = await alunoDomainService.ObterPorId(request.AlunoId);
@@ -31,6 +33,8 @@ public class NotaService (INotaDomainService notaDomainService, IAlunoDomainServ
         NotaMapper.AtualizarEntidade(notaExistente, request, aluno, professor);
 
         notaDomainService.Atualizar(notaExistente);
+
+        return NotaMapper.ToResponse(notaExistente);
     }
 
 

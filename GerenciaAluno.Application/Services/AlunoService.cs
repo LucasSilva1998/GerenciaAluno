@@ -8,27 +8,34 @@ namespace GerenciaAluno.Application.Services
 {
     public class AlunoService (IAlunoDomainService alunoDomainService) : IAlunoService
     {      
-        public async Task CadastrarAsync(AlunoRequest request)
+        public async Task<AlunoResponse> CadastrarAsync(AlunoRequest request)
         {
             var aluno = AlunoMapper.ToEntity(request);
 
             await alunoDomainService.CadastarAluno(aluno);
+
+            return AlunoMapper.ToResponse(aluno);
+
         }
 
-        public async Task AtualizarAsync(int id, AlunoRequest request)
+        public async Task<AlunoResponse> AtualizarAsync(int id, AlunoRequest request)
         {
             var alunoExistente = await alunoDomainService.ObterPorId(id);
 
             AlunoMapper.AtualizarEntidade(alunoExistente, request);
 
             alunoDomainService.Atualizar(alunoExistente);
+
+            return AlunoMapper.ToResponse(alunoExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task<AlunoResponse> RemoverAsync(int id)
         {
             var alunoExistente = await alunoDomainService.ObterPorId(id);
 
             alunoDomainService.Remover(alunoExistente);
+
+            return AlunoMapper.ToResponse(alunoExistente);
         }
 
         public async Task<AlunoResponse> ObterPorIdAsync(int id)

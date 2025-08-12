@@ -3,6 +3,7 @@ using GerenciaAluno.Api.Extensions;
 using GerenciaAluno.Application.Extensions;
 using GerenciaAluno.Application.Interfaces;
 using GerenciaAluno.Application.Services;
+using GerenciaAluno.Domain.Extensions;
 using GerenciaAluno.Domain.Interfaces.Repository;
 using GerenciaAluno.Domain.Interfaces.Services;
 using GerenciaAluno.Domain.Services;
@@ -18,7 +19,10 @@ builder.Services.AddControllers();
 // Application Services
 builder.Services.AddApplicationServices();
 
-// Infra Services + Domain Services
+// Domain Services
+builder.Services.AddDomainServices();
+
+// Infra Services 
 builder.Services.AddEntityFramework(builder.Configuration);
 builder.Services.AddInfrastructureServices();
 

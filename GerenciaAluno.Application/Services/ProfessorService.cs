@@ -15,27 +15,33 @@ namespace GerenciaAluno.Application.Services
 {
     public class ProfessorService (IProfessorDomainService professorDomainService) : IProfessorService
     {      
-        public async Task CadastrarAsync(ProfessorRequest request)
+        public async Task<ProfessorResponse> CadastrarAsync(ProfessorRequest request)
         {
             var professor = ProfessorMapper.ToEntity(request);
 
             await professorDomainService.CadastarProfessor(professor);
+
+            return ProfessorMapper.ToResponse(professor);
         }
 
-        public async Task AtualizarAsync(int id, ProfessorRequest request)
+        public async Task<ProfessorResponse> AtualizarAsync(int id, ProfessorRequest request)
         {
             var professorExistente = await professorDomainService.ObterPorId(id);
 
             ProfessorMapper.AtualizarEntidade(professorExistente, request);
 
             professorDomainService.Atualizar(professorExistente);
+
+            return ProfessorMapper.ToResponse(professorExistente);
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task<ProfessorResponse> RemoverAsync(int id)
         {
             var professorExistente = await professorDomainService.ObterPorId(id);
 
             professorDomainService.Remover(professorExistente);
+
+            return ProfessorMapper.ToResponse(professorExistente);
         }
 
         public async Task<ProfessorResponse> ObterPorIdAsync(int id)

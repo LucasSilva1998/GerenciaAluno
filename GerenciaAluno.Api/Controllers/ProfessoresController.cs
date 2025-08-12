@@ -1,6 +1,7 @@
 ﻿using GerenciaAluno.Application.Dtos.Request;
 using GerenciaAluno.Application.Dtos.Response;
 using GerenciaAluno.Application.Interfaces;
+using GerenciaAluno.Application.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,97 +9,46 @@ namespace GerenciaAluno.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProfessoresController : ControllerBase
+    public class ProfessoresController(IProfessorService professorService) : ControllerBase
     {
-        private readonly IProfessorService _professorService;
-
-        public ProfessoresController(IProfessorService professorService)
-        {
-            _professorService = professorService;
-        }
-
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProfessorResponse), 201)]
         public async Task<IActionResult> Cadastrar([FromBody] ProfessorRequest request)
         {
-            try
-            {
-                await _professorService.CadastrarAsync(request);
-                return Created(string.Empty, new { mensagem = "Professor cadastrado com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return StatusCode(201, await professorService.CadastrarAsync(request));
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProfessorResponse), 200)]
         public async Task<IActionResult> Atualizar(int id, [FromBody] ProfessorRequest request)
         {
-            try
-            {
-                await _professorService.AtualizarAsync(id, request);
-                return Ok(new { mensagem = "Professor atualizado com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return Ok(await professorService.AtualizarAsync(id, request));
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProfessorResponse), 200)]
         public async Task<IActionResult> Remover(int id)
         {
-            try
-            {
-                await _professorService.RemoverAsync(id);
-                return Ok(new { mensagem = "Professor removido com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return Ok(await professorService.RemoverAsync(id));
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ProfessorResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ProfessorResponse), 200)]
         public async Task<ActionResult<ProfessorResponse>> ObterPorId(int id)
         {
-            try
-            {
-                var professor = await _professorService.ObterPorIdAsync(id);
-                if (professor == null)
-                    return NotFound(new { erro = "Professor não encontrado." });
+            var response = await professorService.ObterPorIdAsync(id);
 
-                return Ok(professor);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { erro = ex.Message });
-            }
+            if (response != null)
+                return Ok(response);
+            else
+                return NoContent();
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<ProfessorResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(List<ProfessorResponse>), 200)]
         public async Task<ActionResult<IEnumerable<ProfessorResponse>>> ObterTodos()
         {
-            try
-            {
-                var professores = await _professorService.ObterTodosAsync();
-                return Ok(professores);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { erro = ex.Message });
-            }
+            return Ok(await professorService.ObterTodosAsync());
         }
     }
 }

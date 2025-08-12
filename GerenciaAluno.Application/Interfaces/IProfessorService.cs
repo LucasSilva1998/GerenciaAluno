@@ -10,9 +10,9 @@ namespace GerenciaAluno.Application.Interfaces
 {
     public interface IProfessorService
     {
-        Task CadastrarAsync(ProfessorRequest request);
-        Task AtualizarAsync(int id, ProfessorRequest request);
-        Task RemoverAsync(int id);
+        Task<ProfessorResponse> CadastrarAsync(ProfessorRequest request);
+        Task<ProfessorResponse> AtualizarAsync(int id, ProfessorRequest request);
+        Task<ProfessorResponse> RemoverAsync(int id);
 
         Task<ProfessorResponse> ObterPorIdAsync(int id);
         Task<IEnumerable<ProfessorResponse>> ObterTodosAsync();

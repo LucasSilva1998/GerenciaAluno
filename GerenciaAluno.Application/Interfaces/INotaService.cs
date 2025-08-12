@@ -11,8 +11,8 @@ namespace GerenciaAluno.Application.Interfaces
 {
     public interface INotaService
     {
-        Task LancarNotaAsync(NotaRequest request);
-        Task AtualizarNotaAsync(int id, NotaRequest request);
+        Task<NotaResponse> LancarNotaAsync(NotaRequest request);
+        Task<NotaResponse> AtualizarNotaAsync(int id, NotaRequest request);
 
         Task<NotaResponse> ObterPorIdAsync(int id);
         Task<IEnumerable<NotaResponse>> ObterTodosAsync();

@@ -25,11 +25,6 @@ namespace GerenciaAluno.Infra.Data.Extensions
             services.AddScoped<IProfessorRepository, ProfessorRepository>();
             services.AddScoped<INotaRepository, NotaRepository>();
 
-            // Serviços de domínio
-            services.AddScoped<IAlunoDomainService, AlunoDomainService>();
-            services.AddScoped<IProfessorDomainService, ProfessorDomainService>();
-            services.AddScoped<INotaDomainService, NotaDomainService>();
-
             return services;
         }
     }

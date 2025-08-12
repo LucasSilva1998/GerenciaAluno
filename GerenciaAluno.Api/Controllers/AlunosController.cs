@@ -8,97 +8,46 @@ namespace GerenciaAluno.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AlunosController : ControllerBase
-    {
-        private readonly IAlunoService _alunoService;
-
-        public AlunosController(IAlunoService alunoService)
-        {
-            _alunoService = alunoService;
-        }
-
+    public class AlunosController(IAlunoService alunoService) : ControllerBase
+    {   
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AlunoResponse), 201)]
         public async Task<IActionResult> Cadastrar([FromBody] AlunoRequest request)
         {
-            try
-            {
-                await _alunoService.CadastrarAsync(request);
-                return Created(string.Empty, new { mensagem = "Aluno cadastrado com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return StatusCode(201, await alunoService.CadastrarAsync(request));
         }
 
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AlunoResponse), 200)]
         public async Task<IActionResult> Atualizar(int id, [FromBody] AlunoRequest request)
         {
-            try
-            {
-                await _alunoService.AtualizarAsync(id, request);
-                return Ok(new { mensagem = "Aluno atualizado com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return Ok(await alunoService.AtualizarAsync(id, request));
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AlunoResponse), 200)]
         public async Task<IActionResult> Remover(int id)
         {
-            try
-            {
-                await _alunoService.RemoverAsync(id);
-                return Ok(new { mensagem = "Aluno removido com sucesso." });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { erro = ex.Message });
-            }
+            return Ok(await alunoService.RemoverAsync(id));
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(AlunoResponse), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(AlunoResponse), 200)]
         public async Task<ActionResult<AlunoResponse>> ObterPorId(int id)
         {
-            try
-            {
-                var aluno = await _alunoService.ObterPorIdAsync(id);
-                if (aluno == null)
-                    return NotFound(new { erro = "Aluno não encontrado." });
+            var response = await alunoService.ObterPorIdAsync(id);
 
-                return Ok(aluno);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { erro = ex.Message });
-            }
+            if (response != null)
+                return Ok(response);
+            else
+                return NoContent();
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<AlunoResponse>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(List<AlunoResponse>), 200)]
         public async Task<ActionResult<IEnumerable<AlunoResponse>>> ObterTodos()
         {
-            try
-            {
-                var alunos = await _alunoService.ObterTodosAsync();
-                return Ok(alunos);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { erro = ex.Message });
-            }
+            return Ok(await alunoService.ObterTodosAsync());
         }
     }
 }
