@@ -1,6 +1,6 @@
 using FluentValidation.Validators;
 using GerenciaAluno.Api.Extensions;
-using GerenciaAluno.Api.Middlewares.ProdutosApp.API.Middlewares;
+using GerenciaAluno.Api.Middlewares;
 using GerenciaAluno.Application.Extensions;
 using GerenciaAluno.Application.Interfaces;
 using GerenciaAluno.Application.Services;
