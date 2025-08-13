@@ -1,5 +1,6 @@
 using FluentValidation.Validators;
 using GerenciaAluno.Api.Extensions;
+using GerenciaAluno.Api.Middlewares.ProdutosApp.API.Middlewares;
 using GerenciaAluno.Application.Extensions;
 using GerenciaAluno.Application.Interfaces;
 using GerenciaAluno.Application.Services;
@@ -32,6 +33,9 @@ builder.Services.AddSwaggerDocumentation();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+//Middlewares
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
