@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +17,12 @@ namespace GerenciaAluno.Domain.ValueObjects
         public Cpf(string numero)
         {
             if (string.IsNullOrWhiteSpace(numero))
-                throw new ArgumentException("CPF não pode ser vazio.");
+                throw new ValidationException("CPF não pode ser vazio.");
 
             numero = ApenasDigitos(numero);
 
             if (numero.Length != 11 || !CpfValido(numero))
-                throw new ArgumentException("CPF inválido.");
+                throw new ValidationException("CPF inválido.");
 
             Numero = Formatar(numero);
         }
